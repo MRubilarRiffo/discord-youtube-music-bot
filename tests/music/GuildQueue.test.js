@@ -22,7 +22,10 @@ describe('GuildQueue Player & Orchestration', () => {
     };
     guildQueue = new GuildQueue('guild-123', mockManager, {
       skipListeners: true,
-      getAudioStream: async () => 'https://example.com/fake-stream',
+      getAudioStream: async () => ({
+        stream: 'fake-pcm-stream',
+        process: { kill: () => {} },
+      }),
       player: {
         state: { status: 'idle' },
         play: () => {},
@@ -93,6 +96,18 @@ describe('GuildQueue Player & Orchestration', () => {
     guildQueue.addSongs([createSong('Track 1'), createSong('Track 2')]);
     guildQueue.clear();
     assert.equal(guildQueue.songs.length, 0);
+  });
+
+  it('supports previous and sets isManualTransition to avoid Idle event race condition', async () => {
+    guildQueue.addSongs([createSong('Track 1'), createSong('Track 2')]);
+    // Advance to Track 2 so Track 1 goes into history
+    await guildQueue.playNext();
+    assert.equal(guildQueue.currentSong.title, 'Track 2');
+
+    const prev = guildQueue.previous();
+    assert.equal(prev.title, 'Track 1');
+    assert.equal(guildQueue.currentSong.title, 'Track 1');
+    assert.equal(guildQueue.isManualTransition, true);
   });
 
   it('manages empty channel grace period: starts timer and cancels when member joins', () => {

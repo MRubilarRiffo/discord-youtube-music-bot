@@ -29,6 +29,7 @@ export class GuildQueue {
     this.player = options.player || createAudioPlayer();
     this.resource = null;
     this.currentProcess = null;
+    this.isManualTransition = false;
     this.volume = config.defaultVolume || 0.8;
     this.isPaused = false;
     this.playbackStartTime = 0;
@@ -61,6 +62,7 @@ export class GuildQueue {
   setupPlayerListeners() {
     this.player.on(AudioPlayerStatus.Playing, () => {
       this.isPaused = false;
+      this.isManualTransition = false;
       this.clearIdleTimer();
       this.sendNowPlayingMessage();
     });
@@ -73,6 +75,14 @@ export class GuildQueue {
         } catch {}
         this.currentProcess = null;
       }
+
+      // Si el cambio de pista fue iniciado manualmente por previous() o skipTo(),
+      // ignoramos este evento Idle generado por la detención de la pista anterior
+      if (this.isManualTransition) {
+        this.isManualTransition = false;
+        return;
+      }
+
       this.playNext();
     });
 
@@ -310,6 +320,10 @@ export class GuildQueue {
   previous() {
     const prev = this.queue.getPreviousSong();
     if (prev) {
+      this.isManualTransition = true;
+      try {
+        this.player.stop(true);
+      } catch {}
       this.playStream(prev);
       return prev;
     }
@@ -331,6 +345,10 @@ export class GuildQueue {
   skipTo(index) {
     const target = this.queue.skipTo(index);
     if (target) {
+      this.isManualTransition = true;
+      try {
+        this.player.stop(true);
+      } catch {}
       this.playStream(target);
     }
     return target;
