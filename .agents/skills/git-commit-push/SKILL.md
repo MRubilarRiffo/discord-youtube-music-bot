@@ -103,7 +103,7 @@ El mensaje debe seguir **exactamente** este formato estructurado:
 
 #### Reglas del mensaje:
 
-- **Idioma**: Español, **sin tildes ni caracteres especiales** (ñ sí se permite).
+- **Idioma**: Español, **sin caracteres especiales** (ñ sí se permite).
 - **Tipo**: Usar prefijos convencionales (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`).
 - **Secciones de impacto**: Agrupar cambios por nivel de impacto (ALTO, MEDIO, BAJO).
 - **Áreas entre corchetes**: Ejemplos: `[Reproductor & Audio]`, `[Comandos Slash]`, `[Pruebas]`, `[General]`, `[Documentacion]`, `[Interacciones & Eventos]`, `[Despliegue & Configuracion]`.

@@ -82,4 +82,30 @@ describe('Embed and UI Controls', () => {
     assert.equal(buttonsP5[3].data.disabled, true); // Next
     assert.equal(buttonsP5[4].data.disabled, true); // Last
   });
+
+  it('safely handles long titles in createQueueEmbed without exceeding Discord 1024 character limit', () => {
+    const currentSong = {
+      title: 'Stevie Nicks - Edge of Seventeen (2019 Remaster) (Official Audio Video Extended Edition)',
+      url: 'https://www.youtube.com/watch?v=VsNtkuJEgRQ',
+      durationSec: 330,
+      requestedBy: { id: '123' },
+    };
+
+    const longSongs = Array.from({ length: 10 }, (_, i) => ({
+      title: `Artist ${i + 1} - Extremely Long Title Of A Song (Remastered 2024 Deluxe Anniversary Edition Official HD Video)`,
+      url: `https://www.youtube.com/watch?v=extremely_long_video_id_${i + 1}`,
+      durationSec: 250,
+    }));
+
+    const embed = createQueueEmbed(currentSong, longSongs, 1, 10, 'off');
+    const json = embed.toJSON();
+
+    assert.ok(json.fields);
+    for (const field of json.fields) {
+      assert.ok(
+        field.value.length <= 1024,
+        `Field value length (${field.value.length}) must be <= 1024`
+      );
+    }
+  });
 });

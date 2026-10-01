@@ -60,10 +60,13 @@ export function createNowPlayingEmbed(
     queue: '🔁 Cola',
   };
 
+  const title = song.title || 'Canción de YouTube';
+  const displayTitle = title.length > 250 ? title.substring(0, 247) + '...' : title;
+
   const embed = new EmbedBuilder()
     .setColor(COLORS.PRIMARY)
     .setAuthor({ name: isPaused ? '⏸️ Reproducción Pausada' : '▶️ Reproduciendo Ahora' })
-    .setTitle(song.title.length > 250 ? song.title.substring(0, 247) + '...' : song.title)
+    .setTitle(displayTitle)
     .setURL(song.url)
     .addFields(
       {
@@ -73,7 +76,7 @@ export function createNowPlayingEmbed(
       },
       {
         name: 'Canal',
-        value: song.channel || 'Desconocido',
+        value: (song.channel || 'Desconocido').substring(0, 250),
         inline: true,
       },
       {
@@ -199,10 +202,13 @@ export function createQueuePaginationButtons(currentPage, totalPages) {
  * Embed de confirmación al añadir una canción a la cola
  */
 export function createSongAddedEmbed(song, position) {
+  const title = song.title || 'Canción de YouTube';
+  const displayTitle = title.length > 250 ? title.substring(0, 247) + '...' : title;
+
   const embed = new EmbedBuilder()
     .setColor(COLORS.SUCCESS)
     .setAuthor({ name: '🎵 Añadido a la cola' })
-    .setTitle(song.title.length > 250 ? song.title.substring(0, 247) + '...' : song.title)
+    .setTitle(displayTitle)
     .setURL(song.url)
     .addFields(
       { name: 'Duración', value: formatDuration(song.durationSec), inline: true },
@@ -221,10 +227,13 @@ export function createSongAddedEmbed(song, position) {
  * Embed para playlist añadida
  */
 export function createPlaylistAddedEmbed(playlistTitle, count, durationSec, requestedBy) {
+  const title = playlistTitle || 'Playlist de YouTube';
+  const displayTitle = title.length > 250 ? title.substring(0, 247) + '...' : title;
+
   return new EmbedBuilder()
     .setColor(COLORS.SUCCESS)
     .setAuthor({ name: '📑 Lista de reproducción añadida' })
-    .setTitle(playlistTitle)
+    .setTitle(displayTitle)
     .setDescription(`Se han añadido **${count} canciones** a la cola.`)
     .addFields(
       { name: 'Duración Total Estimada', value: formatDuration(durationSec), inline: true },
@@ -250,8 +259,10 @@ export function createQueueEmbed(currentSong, songs, page = 1, itemsPerPage = 10
     .setTitle('📜 Cola de Reproducción');
 
   if (currentSong) {
+    const rawTitle = currentSong.title || 'Canción de YouTube';
+    const displayTitle = rawTitle.length > 70 ? rawTitle.substring(0, 67) + '...' : rawTitle;
     embed.setDescription(
-      `**Sonando Ahora:**\n▶️ [${currentSong.title}](${currentSong.url}) | \`${formatDuration(currentSong.durationSec)}\` - Solicitado por: ${currentSong.requestedBy ? `<@${currentSong.requestedBy.id}>` : 'Usuario'}\n*Modo bucle: ${loopLabels[loopMode] || 'Desactivado'}*\n\n**Próximas Canciones:**`
+      `**Sonando Ahora:**\n▶️ [${displayTitle}](${currentSong.url}) | \`${formatDuration(currentSong.durationSec)}\` - Solicitado por: ${currentSong.requestedBy ? `<@${currentSong.requestedBy.id}>` : 'Usuario'}\n*Modo bucle: ${loopLabels[loopMode] || 'Desactivado'}*\n\n**Próximas Canciones:**`
     );
   } else {
     embed.setDescription('No hay ninguna canción reproduciéndose actualmente.');
@@ -263,9 +274,18 @@ export function createQueueEmbed(currentSong, songs, page = 1, itemsPerPage = 10
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentSongs = songs.slice(startIndex, startIndex + itemsPerPage);
 
-    const songListString = currentSongs
-      .map((song, i) => `\`${startIndex + i + 1}.\` [${song.title}](${song.url}) - \`${formatDuration(song.durationSec)}\``)
+    let songListString = currentSongs
+      .map((song, i) => {
+        const rawTitle = song.title || 'Canción de YouTube';
+        const cleanTitle = rawTitle.length > 45 ? rawTitle.substring(0, 42) + '...' : rawTitle;
+        return `\`${startIndex + i + 1}.\` [${cleanTitle}](${song.url}) - \`${formatDuration(song.durationSec)}\``;
+      })
       .join('\n');
+
+    // Discord limita el valor de un campo a 1024 caracteres
+    if (songListString.length > 1020) {
+      songListString = songListString.substring(0, 1017) + '...';
+    }
 
     embed.addFields({ name: `En espera (${songs.length} canciones)`, value: songListString });
   }
