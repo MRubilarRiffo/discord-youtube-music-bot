@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { createQueueEmbed, createQueuePaginationButtons, createErrorEmbed } from '../utils/embed.js';
 
 export default {
@@ -19,7 +19,7 @@ export default {
     if (!queue || (!queue.currentSong && queue.songs.length === 0)) {
       return interaction.reply({
         embeds: [createErrorEmbed('La cola de reproducción está vacía actualmente.')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 

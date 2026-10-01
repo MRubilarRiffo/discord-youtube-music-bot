@@ -1,3 +1,4 @@
+import { MessageFlags } from 'discord.js';
 import {
   createQueueEmbed,
   createQueuePaginationButtons,
@@ -17,7 +18,7 @@ export async function handleButtonInteraction(interaction, queueManager) {
     if (!queue || (!queue.currentSong && queue.songs.length === 0)) {
       return interaction.reply({
         embeds: [createErrorEmbed('La cola de reproducción ya no está disponible.')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -69,7 +70,7 @@ export async function handleButtonInteraction(interaction, queueManager) {
   if (!queue || !queue.currentSong) {
     return interaction.reply({
       embeds: [createErrorEmbed('No hay ninguna canción reproduciéndose actualmente.')],
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 
@@ -83,7 +84,7 @@ export async function handleButtonInteraction(interaction, queueManager) {
           'Debes estar en el mismo canal de voz que el bot para usar estos controles.'
         ),
       ],
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 
@@ -95,12 +96,12 @@ export async function handleButtonInteraction(interaction, queueManager) {
       if (paused) {
         await interaction.reply({
           embeds: [createSuccessEmbed('Reproducción pausada ⏸️')],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       } else {
         await interaction.reply({
           embeds: [createErrorEmbed('La música ya estaba pausada o no se pudo pausar.')],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
       break;
@@ -111,12 +112,12 @@ export async function handleButtonInteraction(interaction, queueManager) {
       if (resumed) {
         await interaction.reply({
           embeds: [createSuccessEmbed('Reproducción reanudada ▶️')],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       } else {
         await interaction.reply({
           embeds: [createErrorEmbed('La música no estaba pausada o no se pudo reanudar.')],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
       break;
@@ -127,7 +128,7 @@ export async function handleButtonInteraction(interaction, queueManager) {
       queue.skip();
       await interaction.reply({
         embeds: [createSuccessEmbed(`Saltada: **${songTitle}** ⏭️`)],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       break;
     }
@@ -137,12 +138,12 @@ export async function handleButtonInteraction(interaction, queueManager) {
       if (prev) {
         await interaction.reply({
           embeds: [createSuccessEmbed(`Volviendo a reproducir: **${prev.title}** ⏮️`)],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       } else {
         await interaction.reply({
           embeds: [createErrorEmbed('No hay canciones anteriores en el historial.')],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
       break;
@@ -152,13 +153,13 @@ export async function handleButtonInteraction(interaction, queueManager) {
       if (queue.songs.length === 0) {
         return interaction.reply({
           embeds: [createErrorEmbed('No hay canciones en la cola de espera para mezclar.')],
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
       queue.shuffle();
       await interaction.reply({
         embeds: [createSuccessEmbed(`¡Se han mezclado **${queue.songs.length} canciones**! 🔀`)],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       break;
     }
@@ -172,7 +173,7 @@ export async function handleButtonInteraction(interaction, queueManager) {
       };
       await interaction.reply({
         embeds: [createSuccessEmbed(modeMessages[newMode])],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       break;
     }
@@ -181,7 +182,7 @@ export async function handleButtonInteraction(interaction, queueManager) {
       queue.stop();
       await interaction.reply({
         embeds: [createSuccessEmbed('Música detenida y cola limpiada ⏹️')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       break;
     }
@@ -202,7 +203,7 @@ export async function handleButtonInteraction(interaction, queueManager) {
       await interaction.reply({
         embeds: [queueEmbed],
         components,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       break;
     }

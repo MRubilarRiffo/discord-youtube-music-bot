@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { searchYouTube, getYouTubeSuggestions } from '../utils/youtube.js';
 import {
   createErrorEmbed,
@@ -30,7 +30,7 @@ export default {
     if (!voiceChannel) {
       return interaction.reply({
         embeds: [createErrorEmbed('¡Debes estar en un canal de voz para usar este comando!')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
@@ -42,7 +42,7 @@ export default {
             '¡No tengo permisos suficientes para unirme y hablar en tu canal de voz!'
           ),
         ],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 

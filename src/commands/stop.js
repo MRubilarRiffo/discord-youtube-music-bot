@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { createSuccessEmbed, createErrorEmbed } from '../utils/embed.js';
 
 export default {
@@ -12,14 +12,14 @@ export default {
     if (!queue) {
       return interaction.reply({
         embeds: [createErrorEmbed('El bot no está reproduciendo música ni conectado a un canal de voz.')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
     if (!interaction.member.voice.channel || interaction.member.voice.channel.id !== queue.voiceChannel?.id) {
       return interaction.reply({
         embeds: [createErrorEmbed('Debes estar en el mismo canal de voz que el bot para detener la música.')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 

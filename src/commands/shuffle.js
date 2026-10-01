@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { createSuccessEmbed, createErrorEmbed } from '../utils/embed.js';
 
 export default {
@@ -12,14 +12,14 @@ export default {
     if (!queue || queue.songs.length === 0) {
       return interaction.reply({
         embeds: [createErrorEmbed('No hay suficientes canciones en la cola para mezclar.')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
     if (!interaction.member.voice.channel || interaction.member.voice.channel.id !== queue.voiceChannel?.id) {
       return interaction.reply({
         embeds: [createErrorEmbed('Debes estar en el mismo canal de voz que el bot para mezclar la cola.')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 

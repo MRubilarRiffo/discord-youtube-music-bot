@@ -4,6 +4,7 @@ import {
   Events,
   GatewayIntentBits,
   ActivityType,
+  MessageFlags,
 } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
@@ -92,9 +93,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const errorEmbed = createErrorEmbed('Ocurrió un error inesperado al ejecutar el comando.');
 
       if (interaction.replied || interaction.deferred) {
-        await interaction.followUp({ embeds: [errorEmbed], ephemeral: true }).catch(() => {});
+        await interaction
+          .followUp({ embeds: [errorEmbed], flags: MessageFlags.Ephemeral })
+          .catch(() => {});
       } else {
-        await interaction.reply({ embeds: [errorEmbed], ephemeral: true }).catch(() => {});
+        await interaction
+          .reply({ embeds: [errorEmbed], flags: MessageFlags.Ephemeral })
+          .catch(() => {});
       }
     }
     return;
@@ -110,7 +115,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         await interaction
           .reply({
             embeds: [createErrorEmbed('Hubo un error al procesar esta acción.')],
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           })
           .catch(() => {});
       }

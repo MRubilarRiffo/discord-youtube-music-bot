@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { createNowPlayingEmbed, createPlayerControls, createErrorEmbed } from '../utils/embed.js';
 
 export default {
@@ -12,7 +12,7 @@ export default {
     if (!queue || !queue.currentSong) {
       return interaction.reply({
         embeds: [createErrorEmbed('No hay ninguna canción reproduciéndose actualmente.')],
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
 
